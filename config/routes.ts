@@ -52,6 +52,28 @@ export default [
     component: './TableList',
   },
   {
+    path: '/account',
+    name: 'account',
+    icon: 'user',
+    access: 'canAdmin',
+    routes: [
+      {
+        path: '/account',
+        redirect: '/account/center',
+      },
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: './account/settings',
+      },
+      {
+        path: '/account/list',
+        name: 'list',
+        component: './account/list',
+      },
+    ],
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
