@@ -184,10 +184,19 @@ export function deserialize<T>(serialized: string, type: T): { value: T; remaini
   throw new Error('Unsupported template type');
 }
 
-export async function currentUser(): Promise<User | undefined> {
+export async function currentUser(): Promise<User> {
   const config = await configGet('dashboard', 'userCurrent');
   if (config.length === 0) {
-    return undefined;
+    return {
+      uuid: 'guest',
+      username: 'guest',
+      encryptType: '',
+      encryptKey: '',
+      meta: {
+        nickname: 'guest',
+        avatar: '',
+      },
+    };
   }
   const { value } = deserialize(config, typeInstantiation.user);
   return value;
