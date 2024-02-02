@@ -1,105 +1,72 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { history, useModel } from '@umijs/max';
-import { Spin } from 'antd';
-import { createStyles } from 'antd-style';
-import type { MenuInfo } from 'rc-menu/lib/interface';
-import React, { useCallback } from 'react';
-import { flushSync } from 'react-dom';
+import { Image } from '@/components/Image';
+import { listUser, setCurrentUser } from '@/services/local';
+import { User } from '@/services/typings';
+import { useModel } from '@umijs/max';
+import React from 'react';
 import HeaderDropdown from './HeaderDropdown';
 
 export type GlobalHeaderRightProps = {
-  menu?: boolean;
   children?: React.ReactNode;
 };
 
 export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
-  return <span className="anticon">{initialState?.currentUser.username}</span>;
-};
-
-const useStyles = createStyles(({ token }) => {
-  return {
-    action: {
-      display: 'flex',
-      height: '48px',
-      marginLeft: 'auto',
-      overflow: 'hidden',
-      alignItems: 'center',
-      padding: '0 8px',
-      cursor: 'pointer',
-      borderRadius: token.borderRadius,
-      '&:hover': {
-        backgroundColor: token.colorBgTextHover,
-      },
-    },
-  };
-});
-
-export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
-  const { styles } = useStyles();
-  const { initialState, setInitialState } = useModel('@@initialState');
-
-  const onMenuClick = useCallback(
-    (event: MenuInfo) => {
-      const { key } = event;
-      if (key === 'logout') {
-        flushSync(() => {
-          // setInitialState((s) => ({ ...s, currentUser: undefined }));
-        });
-        // loginOut();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [setInitialState],
-  );
-
-  const loading = (
-    <span className={styles.action}>
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
+  return (
+    <span className="anticon">
+      <Image
+        img={initialState?.currentUser.meta.avatar}
+        style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em 0 0' }}
       />
+      {initialState?.currentUser.meta.nickname.length === 0
+        ? initialState?.currentUser.username
+        : initialState?.currentUser.meta.nickname}
     </span>
   );
+};
 
-  if (!initialState || initialState.loading) {
-    return loading;
-  }
-
-  const menuItems = [
-    ...(menu
-      ? [
-          {
-            key: 'center',
-            icon: <UserOutlined />,
-            label: '个人中心',
-          },
-          {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: '个人设置',
-          },
-          {
-            type: 'divider' as const,
-          },
-        ]
-      : []),
+export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ children }) => {
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const [menuItems, setMenuItems] = React.useState<
     {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: '退出登录',
-    },
-  ];
+      key: string;
+      icon: React.ReactNode;
+      label: string;
+      user: User;
+    }[]
+  >([]);
+
+  React.useEffect(() => {
+    listUser().then((users) => {
+      setMenuItems(
+        users
+          .filter((user) => initialState?.currentUser.uuid !== user.uuid)
+          .map((user) => {
+            return {
+              key: user.uuid,
+              icon: (
+                <Image
+                  img={user.meta.avatar}
+                  style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em' }}
+                />
+              ),
+              label: user.meta.nickname.length === 0 ? user.username : user.meta.nickname,
+              user,
+            };
+          }),
+      );
+    });
+  }, [initialState]);
 
   return (
     <HeaderDropdown
       menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
+        onClick: (item) => {
+          setCurrentUser(item.key);
+          setInitialState({
+            ...initialState,
+            currentUser: menuItems.filter((i) => i.key === item.key)[0].user,
+          });
+        },
         items: menuItems,
       }}
     >

@@ -60,14 +60,14 @@ export default [
         redirect: '/account/center',
       },
       {
-        path: '/account/settings',
-        name: 'settings',
-        component: './account/settings',
-      },
-      {
         path: '/account/list',
         name: 'list',
         component: './account/list',
+      },
+      {
+        path: '/account/add',
+        name: 'add',
+        component: './account/add',
       },
     ],
   },

@@ -1,6 +1,5 @@
 import component from './zh-CN/component';
 import globalHeader from './zh-CN/globalHeader';
-import menu from './zh-CN/menu';
 import pages from './zh-CN/pages';
 import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
@@ -16,9 +15,34 @@ export default {
   'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
   ...pages,
   ...globalHeader,
-  ...menu,
   ...settingDrawer,
   ...settings,
   ...pwa,
   ...component,
+  // global
+  'global.message.submit.success': '提交成功',
+  'global.components.action': '操作',
+  'global.components.action.delete': '删除',
+  'global.components.action.switch': '切换',
+  'global.components.action.upload': '上传',
+  // menu
+  'menu.welcome': '欢迎',
+  'menu.admin': '管理页',
+  'menu.admin.sub-page': '二级管理页',
+  'menu.list.table-list': '查询表格',
+  'menu.account': '用户管理',
+  'menu.account.list': '所有用户',
+  'menu.account.add': '添加用户',
+  // account
+  'account.add.UserEditor.nickname': '昵称',
+  'account.add.UserEditor.avatar': '头像',
+  'account.add.UserEditor.description': '描述',
+  'account.add.UserEditor.meta': '元信息',
+  'account.add.UserEditor.host': '主机',
+  'account.add.UserEditor.hostAddress': '主机地址',
+  'account.add.UserEditor.username': '用户名',
+  'account.add.UserEditor.encryptType': '加密方式',
+  'account.add.UserEditor.encryptKey': '加密密钥',
+  'account.add.UserEditor.encryptType.unencrypted': '不加密',
+  'account.list.title': '用户列表',
 };
