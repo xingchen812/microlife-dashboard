@@ -1,26 +1,12 @@
-import { deleteUser, listUser, setCurrentUser, setUser } from '@/services/local';
 import { User } from '@/services/typings';
 import { ProCard } from '@ant-design/pro-components';
-import { useIntl, useModel } from '@umijs/max';
+import * as UmiMax from '@umijs/max';
 import { Button, Space, Table, message } from 'antd';
-import React from 'react';
 import { UserEditor } from '../add';
 
 export default function App() {
-  const intl = useIntl();
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const [data, setData] = React.useState<User[]>([]);
-  const [flush, setFlush] = React.useState(true);
-
-  React.useEffect(() => {
-    listUser().then((data) => {
-      setData(
-        data.map((item) => {
-          return { ...item, key: item.uuid } as User;
-        }),
-      );
-    });
-  }, [flush]);
+  const intl = UmiMax.useIntl();
+  const { initialState } = UmiMax.useModel('@@initialState');
 
   return (
     <ProCard title={intl.formatMessage({ id: 'account.list.title' })}>
@@ -55,13 +41,15 @@ export default function App() {
                   type="default"
                   size="small"
                   onClick={() => {
-                    deleteUser(item.uuid)
+                    initialState?.action
+                      .deleteUser(item.uuid)
                       .then(() => {
-                        message.success('delete success');
-                        setFlush(!flush);
+                        message.success(
+                          intl.formatMessage({ id: 'global.message.delete.success' }),
+                        );
                       })
                       .catch((e) => {
-                        message.error('delete failed');
+                        message.error(intl.formatMessage({ id: 'global.message.operate.fail' }));
                         console.error(e);
                       });
                   }}
@@ -72,13 +60,7 @@ export default function App() {
                 <Button
                   type="default"
                   size="small"
-                  onClick={() => {
-                    setCurrentUser(item.uuid);
-                    setInitialState({
-                      ...initialState,
-                      currentUser: item,
-                    });
-                  }}
+                  onClick={() => initialState?.action.setCurrentUser(item.uuid)}
                   disabled={initialState?.currentUser.uuid === item.uuid}
                 >
                   {intl.formatMessage({ id: 'global.components.action.switch' })}
@@ -87,7 +69,11 @@ export default function App() {
             ),
           },
         ]}
-        dataSource={data}
+        dataSource={(() => {
+          return initialState?.users.map((item) => {
+            return { ...item, key: item.uuid } as User;
+          });
+        })()}
         expandable={{
           expandedRowRender: (item) => (
             <UserEditor
@@ -96,7 +82,7 @@ export default function App() {
               defaultValue={item}
               onFinish={async (value) => {
                 value.uuid = item.uuid;
-                await setUser(item.uuid, value);
+                await initialState?.action.setUser(item.uuid, value);
               }}
             />
           ),

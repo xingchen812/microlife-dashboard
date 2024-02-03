@@ -1,5 +1,4 @@
 import localforage from 'localforage';
-import { v4 as uuidv4 } from 'uuid';
 import type { User } from './typings.d';
 
 export class typeInstantiation {
@@ -246,76 +245,4 @@ export function convertType<T1>(type1: T1, type2: any): T1 {
   }
 
   return type2;
-}
-
-export async function listUser(): Promise<User[]> {
-  const config = await valuesGet('dashboard_listUser');
-  if (config.length === 0) {
-    return [];
-  }
-  return config.map(({ key, value }) => {
-    const { value: user } = deserialize(value, typeInstantiation.user);
-    user.uuid = key;
-    return user;
-  });
-}
-
-export async function addUser(user: User): Promise<void> {
-  user.uuid = uuidv4();
-  await configSet(
-    'dashboard_listUser',
-    user.uuid,
-    serialize(convertType(typeInstantiation.user, user)),
-  );
-}
-
-export async function setUser(uuid: string, user: User): Promise<void> {
-  user.uuid = uuid;
-  await configSet('dashboard_listUser', uuid, serialize(convertType(typeInstantiation.user, user)));
-}
-
-export async function getUser(uuid: string): Promise<User> {
-  const config = await configGet('dashboard_listUser', uuid);
-  if (config.length === 0) {
-    return typeInstantiation.user;
-  }
-  const { value } = deserialize(config, typeInstantiation.user);
-  return value;
-}
-
-export async function deleteUser(uuid: string): Promise<void> {
-  await configDelete('dashboard_listUser', uuid);
-}
-
-export async function currentUser(): Promise<User> {
-  const config = await configGet('dashboard', 'userCurrent');
-  const guestUser: User = {
-    uuid: 'guest',
-    host: '',
-    username: 'guest',
-    encryptType: '',
-    encryptKey: '',
-    meta: {
-      avatar: {
-        type: 'none',
-        data: '',
-      },
-      nickname: 'guest',
-      description: '',
-    },
-  };
-  if (config.length === 0) {
-    return guestUser;
-  }
-  const { value } = deserialize(config, typeInstantiation.string);
-  const getedUser = await getUser(value);
-  return getedUser.uuid === '' ? guestUser : getedUser;
-}
-
-export async function setCurrentUser(uuid: string | undefined): Promise<void> {
-  if (uuid === undefined) {
-    await configDelete('dashboard', 'userCurrent');
-  } else {
-    await configSet('dashboard', 'userCurrent', serialize(uuid));
-  }
 }

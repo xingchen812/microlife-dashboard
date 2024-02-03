@@ -1,6 +1,3 @@
-import { AvatarDropdown, AvatarName } from './layout/AvatarDropdown';
-import Footer from './layout/Footer';
-import { Question } from './layout/Question';
-import { SelectLang } from './layout/SelectLang';
+import { AvatarDropdown, AvatarName, Footer, Question, SelectLang } from './layout';
 
 export { AvatarDropdown, AvatarName, Footer, Question, SelectLang };

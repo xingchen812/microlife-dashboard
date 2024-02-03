@@ -21,6 +21,8 @@ export default {
   ...pages,
   // global
   'global.message.submit.success': 'Submit success',
+  'global.message.delete.success': 'Delete success',
+  'global.message.operate.fail': 'Operate fail',
   'global.components.action': 'Action',
   'global.components.action.delete': 'Delete',
   'global.components.action.switch': 'Switch',

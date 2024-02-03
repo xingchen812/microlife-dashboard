@@ -21,6 +21,8 @@ export default {
   ...component,
   // global
   'global.message.submit.success': '提交成功',
+  'global.message.delete.success': '删除成功',
+  'global.message.operate.fail': '操作失败',
   'global.components.action': '操作',
   'global.components.action.delete': '删除',
   'global.components.action.switch': '切换',

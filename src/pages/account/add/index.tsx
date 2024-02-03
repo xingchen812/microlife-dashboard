@@ -1,5 +1,4 @@
 import { ImageUpload } from '@/components/Image';
-import { addUser } from '@/services/local';
 import { User } from '@/services/typings';
 import {
   ProCard,
@@ -10,7 +9,7 @@ import {
   ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-components';
-import { useIntl } from '@umijs/max';
+import * as UmiMax from '@umijs/max';
 import { Flex, message } from 'antd';
 import React from 'react';
 
@@ -19,7 +18,7 @@ export function UserEditor(props: {
   onFinish: (value: User) => Promise<void>;
   style?: React.CSSProperties;
 }) {
-  const intl = useIntl();
+  const intl = UmiMax.useIntl();
   const formRef = React.useRef<ProFormInstance>();
 
   return (
@@ -116,10 +115,12 @@ export function UserEditor(props: {
 }
 
 export default function App() {
+  const { initialState } = UmiMax.useModel('@@initialState');
+
   return (
     <UserEditor
       onFinish={async (value) => {
-        await addUser(value);
+        await initialState?.action.addUser(value);
       }}
     />
   );
