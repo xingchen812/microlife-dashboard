@@ -1,24 +1,4 @@
-import component from './en-US/component';
-import globalHeader from './en-US/globalHeader';
-import pages from './en-US/pages';
-import pwa from './en-US/pwa';
-import settingDrawer from './en-US/settingDrawer';
-import settings from './en-US/settings';
-
 export default {
-  'navBar.lang': 'Languages',
-  'layout.user.link.help': 'Help',
-  'layout.user.link.privacy': 'Privacy',
-  'layout.user.link.terms': 'Terms',
-  'app.preview.down.block': 'Download this page to your local project',
-  'app.welcome.link.fetch-blocks': 'Get all block',
-  'app.welcome.link.block-list': 'Quickly build standard, pages based on `block` development',
-  ...globalHeader,
-  ...settingDrawer,
-  ...settings,
-  ...pwa,
-  ...component,
-  ...pages,
   // global
   'global.message.submit.success': 'Submit success',
   'global.message.delete.success': 'Delete success',
@@ -30,8 +10,8 @@ export default {
   // menu
   'menu.welcome': 'Welcome',
   'menu.admin': 'Admin',
-  'menu.admin.sub-page': 'Sub-Page',
-  'menu.list.table-list': 'Search Table',
+  'menu.admin.application': 'Application',
+  'menu.admin.subuser': 'Subuser',
   'menu.account': 'Account',
   'menu.account.list': 'List',
   'menu.account.add': 'Add',

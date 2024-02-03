@@ -1,5 +1,6 @@
 import { Image } from '@/components/Image';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { typeInstantiation } from '@/services/local';
+import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { DefaultFooter } from '@ant-design/pro-components';
 import * as UmiMax from '@umijs/max';
 import { Dropdown } from 'antd';
@@ -17,6 +18,10 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
+
+function GuestIcon() {
+  return <UserOutlined style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em 0 0' }} />;
+}
 
 export type HeaderDropdownProps = {
   overlayClassName?: string;
@@ -39,10 +44,15 @@ export const AvatarName = () => {
   const { initialState } = UmiMax.useModel('@@initialState');
   return (
     <span className="anticon">
-      <Image
-        img={initialState?.currentUser.meta.avatar}
-        style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em 0 0' }}
-      />
+      {initialState?.currentUser.uuid === '' ? (
+        <GuestIcon />
+      ) : (
+        <Image
+          img={initialState?.currentUser.meta.avatar}
+          style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em 0 0' }}
+        />
+      )}
+
       {initialState?.currentUser.meta.nickname.length === 0
         ? initialState?.currentUser.username
         : initialState?.currentUser.meta.nickname}
@@ -57,10 +67,10 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ children }) =
     <HeaderDropdown
       menu={{
         onClick: (item) => {
-          initialState?.action.setCurrentUser(item.key);
+          initialState?.action.setCurrentUser(item.key === '' ? undefined : item.key);
         },
         items: (() => {
-          return initialState?.users
+          const items = initialState?.users
             .filter((user) => initialState?.currentUser.uuid !== user.uuid)
             .map((user) => {
               return {
@@ -75,6 +85,15 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ children }) =
                 user,
               };
             });
+          if (initialState?.currentUser.uuid === '') {
+            return items;
+          }
+          return items?.concat({
+            key: '',
+            icon: <GuestIcon />,
+            label: 'guest',
+            user: typeInstantiation.user,
+          });
         })(),
       }}
     >

@@ -12,17 +12,6 @@
  */
 export default [
   {
-    path: '/user',
-    layout: false,
-    routes: [
-      {
-        name: 'login',
-        path: '/user/login',
-        component: './User/Login',
-      },
-    ],
-  },
-  {
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',
@@ -34,31 +23,22 @@ export default [
     icon: 'crown',
     routes: [
       {
-        path: '/admin',
-        redirect: '/admin/sub-page',
+        path: '/admin/application',
+        name: 'application',
+        component: './admin/application',
       },
       {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
+        path: '/admin/subuser',
+        name: 'subuser',
+        component: './admin/subuser',
       },
     ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
   },
   {
     path: '/account',
     name: 'account',
     icon: 'user',
     routes: [
-      {
-        path: '/account',
-        redirect: '/account/center',
-      },
       {
         path: '/account/list',
         name: 'list',

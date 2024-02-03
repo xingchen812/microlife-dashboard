@@ -1,24 +1,4 @@
-import component from './zh-CN/component';
-import globalHeader from './zh-CN/globalHeader';
-import pages from './zh-CN/pages';
-import pwa from './zh-CN/pwa';
-import settingDrawer from './zh-CN/settingDrawer';
-import settings from './zh-CN/settings';
-
 export default {
-  'navBar.lang': '语言',
-  'layout.user.link.help': '帮助',
-  'layout.user.link.privacy': '隐私',
-  'layout.user.link.terms': '条款',
-  'app.preview.down.block': '下载此页面到本地项目',
-  'app.welcome.link.fetch-blocks': '获取全部区块',
-  'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
-  ...pages,
-  ...globalHeader,
-  ...settingDrawer,
-  ...settings,
-  ...pwa,
-  ...component,
   // global
   'global.message.submit.success': '提交成功',
   'global.message.delete.success': '删除成功',
@@ -30,8 +10,8 @@ export default {
   // menu
   'menu.welcome': '欢迎',
   'menu.admin': '管理页',
-  'menu.admin.sub-page': '二级管理页',
-  'menu.list.table-list': '查询表格',
+  'menu.admin.application': '应用管理',
+  'menu.admin.subuser': '子用户管理',
   'menu.account': '用户管理',
   'menu.account.list': '所有用户',
   'menu.account.add': '添加用户',
