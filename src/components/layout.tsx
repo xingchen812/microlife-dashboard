@@ -1,5 +1,5 @@
 import { Image } from '@/components/Image';
-import { typeInstantiation } from '@/services/local';
+import { typeInstantiation } from '@/types/utils';
 import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { DefaultFooter } from '@ant-design/pro-components';
 import * as UmiMax from '@umijs/max';
@@ -48,7 +48,7 @@ export const AvatarName = () => {
         <GuestIcon />
       ) : (
         <Image
-          img={initialState?.currentUser.meta.avatar}
+          img={initialState?.currentUser.meta.avatar || { type: 'none', data: '' }}
           style={{ height: '1.5em', width: '1.5em', margin: '0 0.5em 0 0' }}
         />
       )}

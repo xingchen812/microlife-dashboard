@@ -1,9 +1,6 @@
-import { AvatarDropdown, AvatarName, SelectLang } from '@/components';
-import { PageLoading, type Settings as LayoutSettings } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from '@umijs/max';
-import { v4 as uuidv4 } from 'uuid';
-import defaultSettings from '../config/defaultSettings';
+import { AvatarDropdown, AvatarName, SelectLang } from "@/components";
 import {
+  User,
   configDelete,
   configGet,
   configSet,
@@ -12,8 +9,14 @@ import {
   serialize,
   typeInstantiation,
   valuesGet,
-} from './services/local';
-import { User } from './services/typings';
+} from "@/types/utils";
+import {
+  PageLoading,
+  type Settings as LayoutSettings,
+} from "@ant-design/pro-components";
+import type { RunTimeLayoutConfig } from "@umijs/max";
+import { v4 as uuidv4 } from "uuid";
+import defaultSettings from "../config/defaultSettings";
 
 // https://umijs.org/zh-CN/plugins/plugin-initial-state
 export async function getInitialState(): Promise<{
@@ -50,7 +53,10 @@ export async function getInitialState(): Promise<{
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+export const layout: RunTimeLayoutConfig = ({
+  initialState,
+  setInitialState,
+}) => {
   (async () => {
     if (initialState === undefined) {
       return;
@@ -66,7 +72,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     });
 
     const getUser = async (uuid: string) => {
-      const config = await configGet('dashboard_listUser', uuid);
+      const config = await configGet("dashboard_listUser", uuid);
       if (config.length === 0) {
         return typeInstantiation.user;
       }
@@ -75,7 +81,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     };
 
     const listUser = async () => {
-      const config = await valuesGet('dashboard_listUser');
+      const config = await valuesGet("dashboard_listUser");
       if (config.length === 0) {
         return [];
       }
@@ -87,17 +93,17 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     };
 
     const currentUser = async () => {
-      const config = await configGet('dashboard', 'userCurrent');
+      const config = await configGet("dashboard", "userCurrent");
       const guestUser: User = {
         ...typeInstantiation.user,
-        username: 'guest',
+        username: "guest",
       };
       if (config.length === 0) {
         return guestUser;
       }
       const { value } = deserialize(config, typeInstantiation.string);
       const getedUser = await getUser(value);
-      return getedUser.uuid === '' ? guestUser : getedUser;
+      return getedUser.uuid === "" ? guestUser : getedUser;
     };
 
     setInitialState({
@@ -110,9 +116,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         async addUser(user: User) {
           user.uuid = uuidv4();
           await configSet(
-            'dashboard_listUser',
+            "dashboard_listUser",
             user.uuid,
-            serialize(convertType(typeInstantiation.user, user)),
+            serialize(convertType(typeInstantiation.user, user))
           );
           setInitialState({
             ...initialState,
@@ -122,9 +128,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         async setUser(uuid: string, user: User) {
           user.uuid = uuid;
           await configSet(
-            'dashboard_listUser',
+            "dashboard_listUser",
             uuid,
-            serialize(convertType(typeInstantiation.user, user)),
+            serialize(convertType(typeInstantiation.user, user))
           );
           setInitialState({
             ...initialState,
@@ -137,7 +143,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           });
         },
         async deleteUser(uuid: string) {
-          await configDelete('dashboard_listUser', uuid);
+          await configDelete("dashboard_listUser", uuid);
           setInitialState({
             ...initialState,
             users: initialState.users.filter((u) => u.uuid !== uuid),
@@ -145,9 +151,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         },
         async setCurrentUser(uuid: string | undefined) {
           if (uuid === undefined) {
-            await configDelete('dashboard', 'userCurrent');
+            await configDelete("dashboard", "userCurrent");
           } else {
-            await configSet('dashboard', 'userCurrent', serialize(uuid));
+            await configSet("dashboard", "userCurrent", serialize(uuid));
           }
           const user = await currentUser();
           setInitialState({
