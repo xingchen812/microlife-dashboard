@@ -9,7 +9,7 @@ import {
   serialize,
   typeInstantiation,
   valuesGet,
-} from "@/types/utils";
+} from "@/types/local";
 import {
   PageLoading,
   type Settings as LayoutSettings,
@@ -38,12 +38,12 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings as Partial<LayoutSettings>,
     action: {
       listUser: async () => [],
-      addUser: async () => {},
-      setUser: async () => {},
+      addUser: async () => { },
+      setUser: async () => { },
       getUser: async () => typeInstantiation.user,
-      deleteUser: async () => {},
+      deleteUser: async () => { },
       currentUser: async () => typeInstantiation.user,
-      setCurrentUser: async () => {},
+      setCurrentUser: async () => { },
     },
     currentUser: typeInstantiation.user,
     users: [],

@@ -1,5 +1,5 @@
 import { ImageUpload } from '@/components/Image';
-import { User } from '@/types/utils';
+import { User } from '@/types/local';
 import {
   ProCard,
   ProForm,

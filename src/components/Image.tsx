@@ -1,4 +1,4 @@
-import { ImageType } from '@/types/utils';
+import { ImageType } from '@/types/local';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useIntl } from '@umijs/max';
 import { Upload, message } from 'antd';

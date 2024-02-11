@@ -1,4 +1,4 @@
-import { User } from '@/types/utils';
+import { User } from '@/types/local';
 import { ProCard } from '@ant-design/pro-components';
 import * as UmiMax from '@umijs/max';
 import { Button, Space, Table, message } from 'antd';
