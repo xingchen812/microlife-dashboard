@@ -1,12 +1,50 @@
 import { User } from '@/types/local';
+import * as Api from '@/types/api';
 import { ProCard } from '@ant-design/pro-components';
 import * as UmiMax from '@umijs/max';
-import { Button, Space, Table, message } from 'antd';
+import { Badge, Button, Space, Table, message } from 'antd';
 import { UserEditor } from '../add';
+import React from 'react';
 
 export default function App() {
   const intl = UmiMax.useIntl();
   const { initialState } = UmiMax.useModel('@@initialState');
+  const [tableData, setTableData] = React.useState<User[]>([]);
+
+  React.useEffect(() => {
+    initialState?.users.map((item, index) => {
+      const user = {
+        ...item,
+        key: item.uuid,
+        _status_version: {
+          status: 'processing',
+          text: intl.formatMessage({ id: 'global.components.status.loading' }),
+        },
+      } as User;
+      Api.core_version(item).then((res) => {
+        if (res.name === "microlife") {
+          (user as any)._status_version = {
+            status: 'success',
+            text: res.version,
+          }
+          setTableData([...tableData, user]);
+        }
+        else {
+          (user as any)._status_version = {
+            status: 'error',
+            text: intl.formatMessage({ id: 'account.add.UserEditor.status.unknown' }),
+          }
+          setTableData([...tableData, user]);
+        }
+      }).catch((e) => {
+        (user as any)._status_version = {
+          status: 'error',
+          text: intl.formatMessage({ id: 'account.add.UserEditor.status.stopped' }),
+        }
+        setTableData([...tableData, user]);
+      })
+    });
+  }, [initialState?.users]);
 
   return (
     <ProCard title={intl.formatMessage({ id: 'account.list.title' })}>
@@ -27,11 +65,11 @@ export default function App() {
             dataIndex: 'username',
             key: 'username',
           },
-          // {
-          //   title: 'server version',
-          //   key: 'action',
-          //   render: (_, render) => <a>{render.serverVersion}</a>,
-          // },
+          {
+            title: intl.formatMessage({ id: 'account.add.UserEditor.status' }),
+            key: 'status',
+            render: (_, item) => <Badge status={(item as any)._status_version.status} text={(item as any)._status_version.text} />,
+          },
           {
             title: intl.formatMessage({ id: 'global.components.action' }),
             key: 'action',
@@ -69,11 +107,7 @@ export default function App() {
             ),
           },
         ]}
-        dataSource={(() => {
-          return initialState?.users.map((item) => {
-            return { ...item, key: item.uuid } as User;
-          });
-        })()}
+        dataSource={tableData}
         expandable={{
           expandedRowRender: (item) => (
             <UserEditor

@@ -18,6 +18,8 @@ export interface User {
   };
 }
 
+export type metp_mt = Map<string, string>;
+
 export class typeInstantiation {
   static readonly integer: number = 0;
   static readonly string: string = '';
@@ -36,6 +38,7 @@ export class typeInstantiation {
       description: '',
     },
   };
+  static readonly metp_mt: metp_mt = new Map([['', '']]);
 }
 
 export async function configSet(group: string, key: string, value: string): Promise<void> {
@@ -110,7 +113,7 @@ export function serialize<T>(value: T): string {
       return (
         do_serialize(value.size) +
         Array.from(value.entries())
-          .map((key, value) => do_serialize(key) + do_serialize(value))
+          .map(([key, value]) => do_serialize(key) + do_serialize(value))
           .join('')
       );
     }
@@ -181,15 +184,11 @@ export function deserialize<T>(str: string, type: T): { value: T; remaining: str
     }
     // map
     else if (type instanceof Map) {
-      const entries = Array.from(type.entries());
       let { value: length, remaining } = do_deserialize(str, typeInstantiation.integer);
-      if (length !== entries.length) {
-        throw new Error('Invalid serialized map');
-      }
       const result: any = new Map();
       for (let i = 0; i < length; i++) {
-        const { value: key, remaining: newRemaining } = do_deserialize(remaining, entries[0][0]);
-        const { value, remaining: newNewRemaining } = do_deserialize(newRemaining, entries[0][1]);
+        const { value: key, remaining: newRemaining } = do_deserialize(remaining, type.values().next().value);
+        const { value, remaining: newNewRemaining } = do_deserialize(newRemaining, type.keys().next().value);
         result.set(key, value);
         remaining = newNewRemaining;
       }

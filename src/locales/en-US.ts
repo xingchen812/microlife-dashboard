@@ -7,6 +7,7 @@ export default {
   'global.components.action.delete': 'Delete',
   'global.components.action.switch': 'Switch',
   'global.components.action.upload': 'Upload',
+  'global.components.status.loading': 'Loading',
   // menu
   'menu.welcome': 'Welcome',
   'menu.admin': 'Admin',
@@ -26,5 +27,8 @@ export default {
   'account.add.UserEditor.encryptType': 'Encrypt Type',
   'account.add.UserEditor.encryptKey': 'Encrypt Key',
   'account.add.UserEditor.encryptType.unencrypted': 'unencrypted',
+  'account.add.UserEditor.status': 'Status',
+  'account.add.UserEditor.status.unknown': 'Unknown',
+  'account.add.UserEditor.status.stopped': 'Stopped',
   'account.list.title': 'User list',
 };

@@ -7,6 +7,7 @@ export default {
   'global.components.action.delete': '删除',
   'global.components.action.switch': '切换',
   'global.components.action.upload': '上传',
+  'global.components.status.loading': '加载中',
   // menu
   'menu.welcome': '欢迎',
   'menu.admin': '管理页',
@@ -26,5 +27,8 @@ export default {
   'account.add.UserEditor.encryptType': '加密方式',
   'account.add.UserEditor.encryptKey': '加密密钥',
   'account.add.UserEditor.encryptType.unencrypted': '不加密',
+  'account.add.UserEditor.status': '状态',
+  'account.add.UserEditor.status.unknown': '未知',
+  'account.add.UserEditor.status.stopped': '已停止',
   'account.list.title': '用户列表',
 };
