@@ -3,6 +3,15 @@ export default {
   'global.message.submit.success': 'Submit success',
   'global.message.delete.success': 'Delete success',
   'global.message.operate.fail': 'Operate fail',
+  'global.message.operate.add': 'Add',
+  'global.message.operate.remove': 'Remove',
+  'global.message.operate.modify': 'Modify',
+  'global.message.operate.flush': 'Flush',
+  'global.message.status.loadSuccess': 'Load success',
+  'global.message.status.loadFail': 'Load fail',
+  'global.message.status.operateSuccess': 'Operate success',
+  'global.message.status.operateFail': 'Operate fail',
+  'global.message.status.inputError': 'Input error',
   'global.components.action': 'Action',
   'global.components.action.delete': 'Delete',
   'global.components.action.switch': 'Switch',
@@ -31,4 +40,7 @@ export default {
   'account.add.UserEditor.status.unknown': 'Unknown',
   'account.add.UserEditor.status.stopped': 'Stopped',
   'account.list.title': 'User list',
+  // admin
+  'admin.subuser.title': 'Subuser list',
+  'admin.subuser.prefix': 'Username prefix',
 };

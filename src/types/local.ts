@@ -260,5 +260,5 @@ export function convertType<T1>(type1: T1, type2: any): T1 {
     return result;
   }
 
-  return type2;
+  return type1;
 }

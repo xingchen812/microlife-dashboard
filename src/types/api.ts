@@ -7,6 +7,8 @@ import * as Local from './local';
 //     running: any | undefined        // is running?
 // }
 
+export type User = Local.User;
+
 const dgtpMetpHead = (() => {
     const periodTimestampS = 1735689600
     const periodType = 2
@@ -65,8 +67,33 @@ export async function core_version(user: Local.User) {
     const res = await request(user, new Map([['_.ui', "0"]]));
     const res_json = JSON.parse(res.get('_.d') || '')
     return {
-        name: res_json["name"] || '',
-        version: res_json["version"] || '',
+        name: Local.convertType<string>(res_json["name"], Local.typeInstantiation.string),
+        version: Local.convertType<string>(res_json["version"], Local.typeInstantiation.string),
     }
 }
 
+export async function core_stop(user: Local.User) {
+    await request(user, new Map([['_.ui', "1"]]));
+}
+
+export async function core_user_list(user: Local.User) {
+    const res = await request(user, new Map([['_.ui', "2"]]));
+    const res_json = JSON.parse(res.get('_.d') || '')
+    if (!Array.isArray(res_json)) {
+        console.error('Invalid response:', res_json)
+        throw new Error('Invalid response')
+    }
+    return res_json.map((item: any) => {
+        return {
+            prefix: Local.convertType<string>(item["prefix"], Local.typeInstantiation.string),
+        }
+    })
+}
+
+export async function core_user_add(user: Local.User, prefix: string) {
+    await request(user, new Map([['_.ui', "3"], ['prefix', prefix]]));
+}
+
+export async function core_user_remove(user: Local.User, prefix: string) {
+    await request(user, new Map([['_.ui', "4"], ['prefix', prefix]]));
+}

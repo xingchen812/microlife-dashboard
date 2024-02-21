@@ -3,6 +3,15 @@ export default {
   'global.message.submit.success': '提交成功',
   'global.message.delete.success': '删除成功',
   'global.message.operate.fail': '操作失败',
+  'global.message.operate.add': '添加',
+  'global.message.operate.remove': '删除',
+  'global.message.operate.modify': '修改',
+  'global.message.operate.flush': '刷新',
+  'global.message.status.loadSuccess': '加载成功',
+  'global.message.status.loadFail': '加载失败',
+  'global.message.status.operateSuccess': '操作成功',
+  'global.message.status.operateFail': '操作失败',
+  'global.message.status.inputError': '输入错误',
   'global.components.action': '操作',
   'global.components.action.delete': '删除',
   'global.components.action.switch': '切换',
@@ -31,4 +40,7 @@ export default {
   'account.add.UserEditor.status.unknown': '未知',
   'account.add.UserEditor.status.stopped': '已停止',
   'account.list.title': '用户列表',
+  // admin
+  'admin.subuser.title': '子用户列表',
+  'admin.subuser.prefix': '用户名前缀',
 };
