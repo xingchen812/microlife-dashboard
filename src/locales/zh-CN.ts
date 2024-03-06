@@ -42,5 +42,5 @@ export default {
   'account.list.title': '用户列表',
   // admin
   'admin.subuser.title': '子用户列表',
-  'admin.subuser.prefix': '用户名前缀',
-};
+  'admin.subuser.mgid': '用户编号',
+}

@@ -42,5 +42,5 @@ export default {
   'account.list.title': 'User list',
   // admin
   'admin.subuser.title': 'Subuser list',
-  'admin.subuser.prefix': 'Username prefix',
-};
+  'admin.subuser.mgid': 'User ID',
+}
