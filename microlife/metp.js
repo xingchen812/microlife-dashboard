@@ -75,8 +75,8 @@ function deserialize(str, type) {
 		let len
 		[len, str] = deserialize(str, 0)
 		const result = new Map()
-		const firstKey = type.keys().next().value;
-		const firstValue = type.get(firstKey);
+		const firstKey = type.keys().next().value
+		const firstValue = type.get(firstKey)
 		for (let i = 0; i < len; i++) {
 			let key
 			[key, str] = deserialize(str, firstKey)
@@ -105,31 +105,31 @@ function metp_request(host, metp) {
 		throw new Error('Invalid metp')
 	}
 	return new Promise((resolve, reject) => {
-		const xhr = new XMLHttpRequest();
-		xhr.open('POST', host);
-		xhr.setRequestHeader('Microlife', 'dgtp');
+		const xhr = new XMLHttpRequest()
+		xhr.open('POST', host)
+		xhr.setRequestHeader('Microlife', 'dgtp')
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState === XMLHttpRequest.DONE) {
 				if (xhr.status === 200) {
-					const [res, str] = deserialize(xhr.responseText, Constant.map);
+					const [res, str] = deserialize(xhr.responseText, Constant.map)
 					if (str.length > 0) {
 						reject(new Error('Invalid response'))
 					}
-					resolve(res);
+					resolve(res)
 				} else {
-					reject(new Error('HTTP error: ' + xhr.status));
+					reject(new Error('HTTP error: ' + xhr.status))
 				}
 			}
-		};
+		}
 		xhr.onerror = function () {
-			reject(new Error('Network error'));
-		};
-		xhr.send(Constant.metp_head + serialize(metp));
-	});
+			reject(new Error('Network error'))
+		}
+		xhr.send(Constant.metp_head + serialize(metp))
+	})
 }
 
 export default {
 	serialize,
 	deserialize,
 	metp_request
-};
+}

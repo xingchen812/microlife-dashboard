@@ -713,6 +713,11 @@
     "@types/babel__core" "^7.20.5"
     react-refresh "^0.14.0"
 
+ace-builds@^1.32.8:
+  version "1.32.8"
+  resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.32.8.tgz#62a056096c51560f112b3ad8b2803246796b32c7"
+  integrity sha512-thjKTlZlW2/9tU6eSOD2mOoEh5A4aUb1c8joWrwwlaA/zmFgEATNhy0W1UORzW60Hg9BeGAjQ3kSX8UuMkZKXg==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -1102,6 +1107,11 @@ define-properties@^1.1.3, define-properties@^1.2.0, define-properties@^1.2.1:
     define-data-property "^1.0.1"
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
+
+diff-match-patch@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.5.tgz#abb584d5f10cd1196dfc55aa03701592ae3f7b37"
+  integrity sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==
 
 doctrine@^2.1.0:
   version "2.1.0"
@@ -1917,6 +1927,16 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
+
 lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
@@ -2483,6 +2503,17 @@ rc-virtual-list@^3.11.1, rc-virtual-list@^3.5.1, rc-virtual-list@^3.5.2:
     classnames "^2.2.6"
     rc-resize-observer "^1.0.0"
     rc-util "^5.36.0"
+
+react-ace@^11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/react-ace/-/react-ace-11.0.1.tgz#5e901629a01113849a3860f47b20d52a9689d55c"
+  integrity sha512-ulk2851Fx2j59AAahZHTe7rmQ5bITW1xytskAt11F8dv3rPLtdwBXCyT2qSbRnJvOq8UpuAhWO4/JhKGqQBEDA==
+  dependencies:
+    ace-builds "^1.32.8"
+    diff-match-patch "^1.0.5"
+    lodash.get "^4.4.2"
+    lodash.isequal "^4.5.0"
+    prop-types "^15.8.1"
 
 react-dom@^18.2.0:
   version "18.2.0"
