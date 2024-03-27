@@ -1,9 +1,11 @@
 import React from 'react'
 import { Button, Space, Select, Card, InputNumber, Input, Row, Col } from 'antd'
-import Metp from '../microlife/metp'
 import AceEditor from 'react-ace'
 import beautify from 'ace-builds/src-noconflict/ext-beautify'
 import json5 from 'json5'
+import PropTypes from 'prop-types'
+
+import Metp from '../microlife/metp'
 
 import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/mode-yaml'
@@ -16,69 +18,13 @@ import 'ace-builds/src-noconflict/mode-c_cpp'
 import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-export default function App() {
+export default function App({ defaultHost, defaultValue }) {
   const [fontSize, setFontSize] = React.useState(22)
   const [langualge, setLanguage] = React.useState('json')
   const editorRef = React.useRef()
-  const [code, setCode] = React.useState(
-    format_json({ '_.u': '/core/version' })
-  )
-  const [host, setHost] = React.useState('http://localhost:6813')
+  const [code, setCode] = React.useState(Metp.to_json_stringify(defaultValue))
+  const [host, setHost] = React.useState(defaultHost)
   const [response, setResponse] = React.useState('')
-
-  function format_json(j, deep = 0) {
-    if (typeof j === 'number') {
-      return j.toString()
-    }
-    if (typeof j === 'string') {
-      return `"${j}"`
-    }
-    if (typeof j === 'boolean') {
-      return j === true ? 'true' : 'false'
-    }
-    if (j === null || j === undefined) {
-      return 'null'
-    }
-    if (Array.isArray(j)) {
-      let str = '[\n'
-      for (const value of j) {
-        str += '\t'.repeat(deep + 1) + format_json(value, deep + 1) + ',\n'
-      }
-      str += ']'
-      return str
-    }
-    if (j instanceof Map) {
-      let str = '{\n'
-      j.forEach((value, key) => {
-        if (typeof key !== 'string') {
-          throw new Error('key must be string')
-        }
-        str +=
-          '\t'.repeat(deep + 1) + `"${key}": ${format_json(value, deep + 1)},\n`
-      })
-      str += '}'
-      return str
-    }
-    if (typeof j === 'object') {
-      let str = '{\n'
-      for (const key in j) {
-        str +=
-          '\t'.repeat(deep + 1) +
-          `"${key}": ${format_json(j[key], deep + 1)},\n`
-      }
-      str += '}'
-      return str
-    }
-    throw new Error('unknown type')
-  }
-
-  function json_to_map(j) {
-    const map = new Map()
-    for (const key in j) {
-      map.set(key, j[key])
-    }
-    return map
-  }
 
   return (
     <Card>
@@ -89,9 +35,9 @@ export default function App() {
             beautify.beautify(editorRef.current.editor.session)
           }}
         >
-          格式化
+          Format
         </Button>
-        字体:
+        FontSize:
         <InputNumber
           min={1}
           max={200}
@@ -102,7 +48,7 @@ export default function App() {
             setFontSize(value)
           }}
         />
-        语言:
+        Document:
         <Select
           disabled
           defaultValue="json"
@@ -128,16 +74,17 @@ export default function App() {
           type="primary"
           onClick={() => {
             setResponse('')
-            Metp.metp_request(host, json_to_map(json5.parse(code)))
+            Metp.metp_request(host, Metp.to_metp(json5.parse(code)))
               .then((response) => {
-                setResponse(format_json(response))
+                setResponse(Metp.to_json_stringify(response))
               })
               .catch((error) => {
-                console.error(error)
+                setResponse(Metp.to_json_stringify(error.toString()))
+                console.log(error)
               })
           }}
         >
-          发送请求
+          Request
         </Button>
         Host:
         <Input
@@ -197,4 +144,9 @@ export default function App() {
       </Row>
     </Card>
   )
+}
+
+App.propTypes = {
+  defaultHost: PropTypes.string.isRequired,
+  defaultValue: PropTypes.any.isRequired,
 }

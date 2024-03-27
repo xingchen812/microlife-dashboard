@@ -128,8 +128,116 @@ function metp_request(host, metp) {
 	})
 }
 
+function add_to_map(metp, key, value) {
+	if (typeof value === 'number') {
+		metp.set(key, value.toString())
+		return
+	}
+	if (typeof value === 'string') {
+		metp.set(key, value)
+		return
+	}
+	if (typeof value === 'boolean') {
+		metp.set(key, value === true ? 'true' : 'false')
+		return
+	}
+	if (value === null || value === undefined) {
+		metp.set(key, 'null')
+		return
+	}
+	if (Array.isArray(value)) {
+		for (let i = 0; i < value.length; i++) {
+			add_to_map(metp, key + '[' + i.toString() + ']', value[i])
+		}
+		return
+	}
+	if (value instanceof Map) {
+		value.forEach((v, k) => {
+			add_to_map(metp, key + '.' + k, v)
+		})
+		return
+	}
+	if (typeof value === 'object') {
+		for (const k in value) {
+			add_to_map(metp, key + '.' + k, value[k])
+		}
+		return
+	}
+	throw new Error('Invalid value')
+}
+
+function to_metp(j) {
+	if (typeof j === 'object') {
+		const metp = new Map()
+		for (const key in j) {
+			add_to_map(metp, key, j[key])
+		}
+		return metp
+	}
+	if (j instanceof Map) {
+		const metp = new Map()
+		j.forEach((value, key) => {
+			add_to_map(metp, key, value)
+		})
+		return metp
+	}
+	throw new Error('Invalid value')
+}
+
+function to_json_stringify(value) {
+	function format_json(j, deep = 0) {
+		if (typeof j === 'number') {
+			return j.toString()
+		}
+		if (typeof j === 'string') {
+			return `"${j}"`
+		}
+		if (typeof j === 'boolean') {
+			return j === true ? 'true' : 'false'
+		}
+		if (j === null || j === undefined) {
+			return 'null'
+		}
+		if (Array.isArray(j)) {
+			let str = '[\n'
+			for (const value of j) {
+				str += '\t'.repeat(deep + 1) + format_json(value, deep + 1) + ',\n'
+			}
+			str += ']'
+			return str
+		}
+		if (j instanceof Map) {
+			let str = '{\n'
+			j.forEach((value, key) => {
+				if (typeof key !== 'string') {
+					throw new Error('key must be string')
+				}
+				str +=
+					'\t'.repeat(deep + 1) + `"${key}": ${format_json(value, deep + 1)},\n`
+			})
+			str += '}'
+			return str
+		}
+		if (typeof j === 'object') {
+			let str = '{\n'
+			for (const key in j) {
+				str +=
+					'\t'.repeat(deep + 1) +
+					`"${key}": ${format_json(j[key], deep + 1)},\n`
+			}
+			str += '}'
+			return str
+		}
+		throw new Error('unknown type')
+	}
+
+	return format_json(value)
+}
+
 export default {
 	serialize,
 	deserialize,
-	metp_request
+	metp_request,
+	to_metp,
+	to_json_stringify,
 }
