@@ -58,7 +58,7 @@ export default function App({ menu_config, uri_config }) {
     <ProConfigProvider>
       <ProLayout
         title="Microlife"
-        logo="/favicon.ico"
+        logo="./favicon.ico"
         route={{
           routes: generateMenuItemsFromConfig(menu_config),
         }}
