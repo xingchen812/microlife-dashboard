@@ -3,9 +3,10 @@ import { PageContainer, ProLayout } from '@ant-design/pro-components'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { ProConfigProvider } from '@ant-design/pro-provider'
 
+import { GlobalContext } from './main'
 import MetpEditor from './MetpEditor'
 import Config from './Config'
-import { GlobalContext } from './main'
+import Request from './Request'
 
 function initConfig(config) {
   function checkItem(item, isSystem) {
@@ -97,6 +98,9 @@ function DynamicComponent(data) {
     case 'config':
       return <Config />
 
+    case 'request':
+      return <Request data={data} />
+
     default:
       return <div>Unknown component name: {data.component}</div>
   }
@@ -108,7 +112,6 @@ export default function App() {
   const [config, setConfig] = React.useState([])
 
   React.useEffect(() => {
-    console.log(global.config.config)
     setConfig(initConfig(global.config))
   }, [global])
 

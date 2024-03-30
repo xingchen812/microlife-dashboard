@@ -42,14 +42,53 @@ class ConfigType {
         component: 'request',
         fields: [
           {
-            key: 'field_a', // for metp uri
-            label: 'Field A', // for tip
-            type: 'text', // text, select, radio, checkbox, textarea, editor, number
-            typeData: '', // for select/ editor type
+            key: 'field_a',
+            label: 'Field text',
+            type: 'text',
             required: true,
-            disable: false,
+          },
+          {
+            key: 'field_b',
+            label: 'Field select',
+            type: 'select',
+            typeData: ['a', 'b', 'c', 'd'],
+            defaultValue: 'a',
+            required: true,
+          },
+          {
+            key: 'field_c',
+            label: 'Field checkbox',
+            type: 'checkbox',
+            defaultValue: true,
             shown: true,
-            defaultValue: '',
+          },
+          {
+            key: 'field_d',
+            label: 'Field textarea',
+            type: 'textarea',
+          },
+          {
+            key: 'field_e',
+            label: 'Field editor',
+            type: 'editor',
+          },
+          {
+            key: 'field_f',
+            label: 'Field number',
+            type: 'number',
+          },
+          {
+            key: 'field_g',
+            label: 'Field host',
+            type: 'host',
+            defaultValue: 'http://localhost:6813',
+          },
+          {
+            key: 'field_unshown',
+            label: 'Field unshown',
+            type: 'text',
+            defaultValue: 'text unshown',
+            shown: false,
           },
         ],
       },
