@@ -8,13 +8,6 @@ import PropTypes from 'prop-types'
 import Metp from '../microlife/metp'
 
 import 'ace-builds/src-noconflict/mode-json'
-import 'ace-builds/src-noconflict/mode-yaml'
-import 'ace-builds/src-noconflict/mode-xml'
-import 'ace-builds/src-noconflict/mode-lua'
-import 'ace-builds/src-noconflict/mode-javascript'
-import 'ace-builds/src-noconflict/mode-python'
-import 'ace-builds/src-noconflict/mode-java'
-import 'ace-builds/src-noconflict/mode-c_cpp'
 import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
@@ -25,6 +18,14 @@ export default function App({ defaultHost, defaultValue }) {
   const [code, setCode] = React.useState(Metp.to_json_stringify(defaultValue))
   const [host, setHost] = React.useState(defaultHost)
   const [response, setResponse] = React.useState('')
+
+  React.useEffect(() => {
+    setHost(defaultHost)
+  }, [defaultHost])
+
+  React.useEffect(() => {
+    setCode(Metp.to_json_stringify(defaultValue))
+  }, [defaultValue])
 
   return (
     <Card>
@@ -88,7 +89,7 @@ export default function App({ defaultHost, defaultValue }) {
         </Button>
         Host:
         <Input
-          defaultValue={host}
+          value={host}
           onChange={(e) => {
             setHost(e.target.value)
           }}

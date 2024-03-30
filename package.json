@@ -1,7 +1,7 @@
 {
   "name": "microlife-dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,6 +14,7 @@
     "ace-builds": "^1.32.8",
     "antd": "^5.15.4",
     "json5": "^2.2.3",
+    "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-ace": "^11.0.1",
     "react-dom": "^18.2.0",

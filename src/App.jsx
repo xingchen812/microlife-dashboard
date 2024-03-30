@@ -1,9 +1,11 @@
+import React from 'react'
 import { PageContainer, ProLayout } from '@ant-design/pro-components'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { ProConfigProvider } from '@ant-design/pro-provider'
-import PropTypes from 'prop-types'
 
 import MetpEditor from './MetpEditor'
+import Config from './Config'
+import { GlobalContext } from './main'
 
 function generateMenuItemsFromConfig(config) {
   return Object.entries(config).map(([key, value]) => {
@@ -26,32 +28,17 @@ function DynamicComponent({ componentName, data }) {
   switch (componentName) {
     case 'metp_editor':
       return <MetpEditor defaultHost={data.host} defaultValue={data.default} />
+
+    case 'config':
+      return <Config config={data.config} />
+
+    default:
+      return <div>Unknown component name: {componentName}</div>
   }
-  throw new Error(`Unknown component name: ${componentName}`)
 }
 
-DynamicComponent.propTypes = {
-  componentName: PropTypes.string.isRequired,
-  data: PropTypes.any.isRequired,
-}
-
-function generateRouteItemsFromConfig(config) {
-  return (
-    <Routes>
-      {Object.entries(config).map(([path, { component, data }]) => {
-        return (
-          <Route
-            key={path}
-            path={path}
-            element={<DynamicComponent componentName={component} data={data} />}
-          />
-        )
-      })}
-    </Routes>
-  )
-}
-
-export default function App({ menu_config, uri_config }) {
+export default function App() {
+  const { globalState } = React.useContext(GlobalContext)
   const location = useLocation()
 
   return (
@@ -60,22 +47,29 @@ export default function App({ menu_config, uri_config }) {
         title="Microlife"
         logo="./favicon.ico"
         route={{
-          routes: generateMenuItemsFromConfig(menu_config),
+          routes: generateMenuItemsFromConfig(globalState.config.menu),
         }}
-        location={{
-          pathname: location.pathname,
-        }}
+        location={{ pathname: location.pathname }}
         menuItemRender={(item, dom) => <Link to={item.path}>{dom}</Link>}
       >
         <PageContainer>
-          {generateRouteItemsFromConfig(uri_config)}
+          <Routes>
+            {Object.entries(globalState.config.url).map(
+              ([path, { component, data }]) => {
+                return (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <DynamicComponent componentName={component} data={data} />
+                    }
+                  />
+                )
+              }
+            )}
+          </Routes>
         </PageContainer>
       </ProLayout>
     </ProConfigProvider>
   )
-}
-
-App.propTypes = {
-  menu_config: PropTypes.any.isRequired,
-  uri_config: PropTypes.any.isRequired,
 }
