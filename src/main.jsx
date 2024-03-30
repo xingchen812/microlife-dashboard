@@ -2,166 +2,161 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import localforage from 'localforage'
+import json5 from 'json5'
 
 import Metp from '../microlife/metp'
 import App from './App.jsx'
 
-class GlobalContextType {
-  static k_menu = () => {
-    return {
-      dashboard: {
-        metp_editor: '/dashboard/metp_editor',
-        config: '/dashboard/config',
-      },
-    }
-  }
-  static k_url = () => {
-    return {
-      '/dashboard/metp_editor': {
+class ConfigType {
+  static systemConfig() {
+    return [
+      {
+        menu: ['dashboard', 'metp editor'],
         component: 'metp_editor',
-        data: {
-          host: 'http://localhost:6813',
-          default: { '_.u': '/core/version' },
+        host: 'http://localhost:6813',
+        fields: {
+          '_.u': '/core/version',
         },
       },
-      '/dashboard/config': {
+      {
+        menu: ['dashboard', 'config'],
         component: 'config',
-        data: {
-          config: {
-            menu: {},
-            url: {},
-          },
+      },
+    ]
+  }
+
+  static defaultConfig() {
+    return [
+      {
+        menu: ['example', 'metp editor'],
+        component: 'metp_editor',
+        host: 'http://example:6813',
+        fields: {
+          '_.u': '/example',
+          something: 'something value',
         },
       },
-    }
+      {
+        menu: ['example', 'request NO.1'],
+        path: '/example/request/no.1',
+        component: 'request',
+        fields: [
+          {
+            key: 'field_a', // for metp uri
+            label: 'Field A', // for tip
+            type: 'text', // text, select, radio, checkbox, textarea, editor, number
+            typeData: '', // for select/ editor type
+            required: true,
+            disable: false,
+            shown: true,
+            defaultValue: '',
+          },
+        ],
+      },
+    ]
   }
 
   constructor() {
-    this.configUser = {
-      menu: {},
-      url: {},
-      storageLocation: { type: 'localStorage' },
+    this.user = []
+    this.userStr = ''
+    this.system = ConfigType.systemConfig()
+    this.storage = { type: 'localStorage' }
+  }
+
+  // @user is string, @storage is object
+  async update({ user, storage, _un_save, _un_flush }) {
+    if (user !== undefined && user !== null) {
+      if (typeof user !== 'string') {
+        throw new Error('user must be an string', user)
+      }
+      this.userStr = user
+      this.user = json5.parse(user)
     }
-    this.config = {
-      menu: GlobalContextType.k_menu(),
-      url: GlobalContextType.k_url(),
+    if (storage !== undefined && storage !== null) {
+      if (typeof storage !== 'object') {
+        throw new Error('storage must be an object', storage)
+      }
+      this.storage = storage
+    }
+    if (_un_save !== true) {
+      await this.save()
+    }
+    if (_un_flush !== true) {
+      this.flush()
     }
   }
 
-  async configUpdateMenu(menu, save = true) {
-    this.configUser.menu = menu
-    this.config.menu = {
-      ...menu,
-      ...GlobalContextType.k_menu(),
-    }
-    this.config.url['/dashboard/config'].data.config.menu = menu
-    if (save === true) {
-      await this.configSave()
-    }
-    this.flush()
-  }
-
-  async configUpdateUrl(url, save = true) {
-    this.configUser.url = url
-    this.config.url = {
-      ...url,
-      ...GlobalContextType.k_url(),
-    }
-    this.config.url['/dashboard/config'].data.config.url = url
-    this.config.url['/dashboard/config'].data.config.menu = this.configUser.menu
-    if (save === true) {
-      await this.configSave()
-    }
-    this.flush()
-  }
-
-  async configUpdateStorageLocation(storageLocation, save = true) {
-    this.configUser.storageLocation = storageLocation
-    if (save === true) {
-      await this.configSave()
-    }
-    this.flush()
-  }
-
-  async configSave() {
+  async save() {
     await localforage.setItem(
-      'microlife_dashboard_config_storage_location',
-      this.configUser.storageLocation
+      'microlife_dashboard_config_storage',
+      this.storage
     )
-    switch (this.configUser.storageLocation.type) {
+    switch (this.storage.type) {
       case 'localStorage':
         await localforage.setItem(
-          'microlife_dashboard_config_menu',
-          this.configUser.menu
-        )
-        await localforage.setItem(
-          'microlife_dashboard_config_url',
-          this.configUser.url
+          'microlife_dashboard_config_user',
+          this.userStr
         )
         break
 
       case 'microlife':
         await Metp.metp_request(
-          this.configUser.storageLocation.data,
+          this.storage.data,
           new Map([
-            ['menu', this.configUser.menu],
-            ['url', this.configUser.url],
+            ['_.u', '/config/dashboard/microlife_dashboard_config_user'],
+            ['_.d', this.userStr],
           ])
         )
         break
 
       default:
-        throw new Error(
-          'unknown storage location type: ' +
-            this.configUser.storageLocation.type
-        )
+        throw new Error('unknown storage location type: ' + this.storage.type)
     }
   }
 
-  async configLoad() {
-    let value = await localforage.getItem(
-      'microlife_dashboard_config_storage_location'
+  async load() {
+    let storage = await localforage.getItem(
+      'microlife_dashboard_config_storage'
     )
-    if (value && typeof value === 'object') {
-      await this.configUpdateStorageLocation(value, false)
+    if (
+      storage === undefined ||
+      storage === null ||
+      typeof storage !== 'object'
+    ) {
+      storage = { type: 'localStorage' }
     }
 
-    value = await localforage.getItem('microlife_dashboard_config_menu')
-    if (value && typeof value === 'object') {
-      await this.configUpdateMenu(value, false)
-    } else {
-      await this.configUpdateMenu(
-        {
-          example: {
-            metp_editor: '/example/metp_editor',
-          },
-        },
-        false
-      )
+    let value
+    switch (storage.type) {
+      case 'localStorage':
+        value = await localforage.getItem('microlife_dashboard_config_user')
+        break
+
+      case 'microlife':
+        const res = await Metp.metp_request(
+          this.storage.data,
+          new Map([
+            ['_.u', '/config/dashboard/microlife_dashboard_config_user'],
+            ['_.d', this.userStr],
+          ])
+        )
+        value = res['_.d']
+        break
+
+      default:
+        throw new Error('unknown storage location type: ' + storage.type)
     }
 
-    value = await localforage.getItem('microlife_dashboard_config_url')
-    if (value && typeof value === 'object') {
-      await this.configUpdateUrl(value, false)
-    } else {
-      await this.configUpdateUrl(
-        {
-          '/example/metp_editor': {
-            component: 'metp_editor',
-            data: {
-              host: 'http://example:6813',
-              default: {
-                '_.u': '/example',
-                something: 'something value',
-              },
-            },
-          },
-        },
-        false
-      )
+    if (value === undefined || value === null || typeof value !== 'string') {
+      value = JSON.stringify(ConfigType.defaultConfig())
     }
 
-    this.flush()
+    await this.update({
+      user: value,
+      storage: storage,
+      _un_save: true,
+      _un_flush: false,
+    })
   }
 
   flush() {
@@ -172,22 +167,25 @@ class GlobalContextType {
 export const GlobalContext = React.createContext()
 
 function Root() {
-  const [globalState, setGlobalState] = React.useState({
-    global: new GlobalContextType(),
+  const [global, setGlobal] = React.useState({
+    config: new ConfigType(),
     _for_flush: 0,
   })
 
   React.useEffect(() => {
-    globalState.global.flush = () =>
-      setGlobalState((prevState) => ({
-        ...prevState,
-        _for_flush: prevState._for_flush + 1,
-      }))
-    globalState.global.configLoad()
+    setGlobal((prev) => {
+      prev.config.flush = () =>
+        setGlobal((prevState) => ({
+          ...prevState,
+          _for_flush: prevState._for_flush + 1,
+        }))
+      return prev
+    })
+    global.config.load()
   }, [])
 
   return (
-    <GlobalContext.Provider value={{ globalState: globalState.global }}>
+    <GlobalContext.Provider value={{ global, setGlobal }}>
       <App />
     </GlobalContext.Provider>
   )

@@ -3,7 +3,6 @@ import { Button, Space, Select, Card, InputNumber, Input, Row, Col } from 'antd'
 import AceEditor from 'react-ace'
 import beautify from 'ace-builds/src-noconflict/ext-beautify'
 import json5 from 'json5'
-import PropTypes from 'prop-types'
 
 import Metp from '../microlife/metp'
 
@@ -108,7 +107,7 @@ export default function App({ defaultHost, defaultValue }) {
               enableBasicAutocompletion: true,
               enableLiveAutocompletion: true,
               enableSnippets: true,
-              tabSize: 4,
+              tabSize: 2,
               highlightActiveLine: true,
               fontSize: fontSize,
               showPrintMargin: false,
@@ -131,7 +130,7 @@ export default function App({ defaultHost, defaultValue }) {
               enableBasicAutocompletion: true,
               enableLiveAutocompletion: true,
               enableSnippets: true,
-              tabSize: 4,
+              tabSize: 2,
               highlightActiveLine: true,
               fontSize: fontSize,
               showPrintMargin: false,
@@ -145,9 +144,4 @@ export default function App({ defaultHost, defaultValue }) {
       </Row>
     </Card>
   )
-}
-
-App.propTypes = {
-  defaultHost: PropTypes.string.isRequired,
-  defaultValue: PropTypes.any.isRequired,
 }

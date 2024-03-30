@@ -1,7 +1,5 @@
 import React from 'react'
 import {
-  Col,
-  Row,
   Space,
   message,
   Form,
@@ -14,7 +12,6 @@ import {
 } from 'antd'
 import AceEditor from 'react-ace'
 import beautify from 'ace-builds/src-noconflict/ext-beautify'
-import json5 from 'json5'
 
 import Metp from '../microlife/metp'
 import { GlobalContext } from './main'
@@ -97,7 +94,7 @@ function Editor({ defaultValue, onSave }) {
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
           enableSnippets: true,
-          tabSize: 4,
+          tabSize: 2,
           highlightActiveLine: true,
           fontSize: fontSize,
           showPrintMargin: false,
@@ -114,35 +111,15 @@ function Editor({ defaultValue, onSave }) {
   )
 }
 
-function ConfigMenu() {
-  const { globalState } = React.useContext(GlobalContext)
+function ConfigEditor() {
+  const { global } = React.useContext(GlobalContext)
 
   return (
     <Editor
-      defaultValue={globalState.configUser.menu}
+      defaultValue={global.config.user}
       onSave={(value) => {
-        globalState
-          .configUpdateMenu(json5.parse(value))
-          .then(() => {
-            message.success('save success')
-          })
-          .catch((e) => {
-            message.error('save failed: ' + e)
-          })
-      }}
-    ></Editor>
-  )
-}
-
-function ConfigUrl() {
-  const { globalState } = React.useContext(GlobalContext)
-
-  return (
-    <Editor
-      defaultValue={globalState.configUser.url}
-      onSave={(value) => {
-        globalState
-          .configUpdateUrl(json5.parse(value))
+        global.config
+          .update({ user: value })
           .then(() => {
             message.success('save success')
           })
@@ -155,19 +132,19 @@ function ConfigUrl() {
 }
 
 function ConfigStorage() {
-  const { globalState } = React.useContext(GlobalContext)
+  const { global } = React.useContext(GlobalContext)
   const [form] = Form.useForm()
   const type = Form.useWatch('type', form)
 
   return (
     <Card>
       <Form
-        initialValues={globalState.configUser.storageLocation}
+        initialValues={global.config.storage}
         form={form}
         autoComplete="off"
         onFinish={(v) => {
-          globalState
-            .configUpdateStorageLocation(v)
+          global.config
+            .update({ storage: v })
             .then(() => {
               message.success('save success')
             })
@@ -185,7 +162,7 @@ function ConfigStorage() {
         {(() => {
           switch (type) {
             case 'localStorage':
-              return null
+              return undefined
 
             case 'microlife':
               return (
@@ -195,7 +172,7 @@ function ConfigStorage() {
               )
 
             default:
-              return null
+              return undefined
           }
         })()}
         <Form.Item>
@@ -209,7 +186,7 @@ function ConfigStorage() {
 }
 
 export default function App() {
-  const [formType, setFormType] = React.useState('menu')
+  const [formType, setFormType] = React.useState('config json')
 
   return (
     <>
@@ -218,23 +195,19 @@ export default function App() {
         onChange={(e) => setFormType(e.target.value)}
         style={{ marginBottom: 16 }}
       >
-        <Radio.Button value="menu">menu</Radio.Button>
-        <Radio.Button value="url">url</Radio.Button>
+        <Radio.Button value="config json">config json</Radio.Button>
         <Radio.Button value="storage">storage</Radio.Button>
       </Radio.Group>
       {(() => {
         switch (formType) {
-          case 'menu':
-            return <ConfigMenu />
-
-          case 'url':
-            return <ConfigUrl />
+          case 'config json':
+            return <ConfigEditor />
 
           case 'storage':
             return <ConfigStorage />
 
           default:
-            return null
+            return undefined
         }
       })()}
     </>
