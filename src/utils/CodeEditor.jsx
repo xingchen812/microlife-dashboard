@@ -13,6 +13,7 @@ export default function App({
 	const [fontSize, setFontSize] = React.useState(22)
 	const [language, setLanguage] = React.useState(defaultLanguage || 'text')
 	const [editor, setEditor] = React.useState(null)
+	const [beautify, setBeautify] = React.useState(null)
 
 	React.useEffect(() => {
 		if (!editorRef.current) {
@@ -26,12 +27,12 @@ export default function App({
 			return
 		}
 		editor.setTheme('ace/theme/github')
-		// console.log(Object.keys(editor.$options))
-		// editor.setOptions({
-		// 	enableBasicAutocompletion: true,
-		// 	enableLiveAutocompletion: true,
-		// })
+		editor.setOptions({
+			enableBasicAutocompletion: true,
+			enableLiveAutocompletion: true,
+		})
 		editor.session.setTabSize(2)
+		setBeautify(window.ace.require('ace/ext/beautify'))
 		return () => {
 			editor.destroy()
 			editor.container.remove()
@@ -78,12 +79,15 @@ export default function App({
 		setLanguage(defaultLanguage)
 	}, [defaultLanguage])
 
-	const formatCode = () => {}
-
 	return (
 		<Card>
 			<Space wrap style={{ marginBottom: 16 }}>
-				<Button type="primary" onClick={formatCode}>
+				<Button
+					type="primary"
+					onClick={() => {
+						beautify.beautify(editor.session)
+					}}
+				>
 					Format
 				</Button>
 				<span>Font Size:</span>
