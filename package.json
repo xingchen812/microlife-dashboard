@@ -11,12 +11,11 @@
   },
   "dependencies": {
     "@ant-design/pro-components": "^2.6.52",
-    "ace-builds": "^1.32.8",
     "antd": "^5.15.4",
+    "js-beautify": "^1.15.1",
     "json5": "^2.2.3",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
-    "react-ace": "^11.0.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3"
   },
