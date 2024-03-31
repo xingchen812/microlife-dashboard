@@ -26,10 +26,11 @@ export default function App({
 			return
 		}
 		editor.setTheme('ace/theme/github')
-		editor.setOptions({
-			enableBasicAutocompletion: true,
-			enableLiveAutocompletion: true,
-		})
+		// console.log(Object.keys(editor.$options))
+		// editor.setOptions({
+		// 	enableBasicAutocompletion: true,
+		// 	enableLiveAutocompletion: true,
+		// })
 		editor.session.setTabSize(2)
 		return () => {
 			editor.destroy()
