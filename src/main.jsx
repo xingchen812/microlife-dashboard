@@ -102,7 +102,33 @@ class DashboardConfig {
 			{
 				menu: ['example', 'request table'],
 				component: 'request_table',
-				fields: [
+				request: {
+					component: 'request_form',
+					fields: [
+						{
+							key: 'host',
+							label: 'host',
+							type: 'host',
+							defaultValue: 'http://localhost:6813',
+							required: true,
+							shown: false,
+						},
+						{
+							key: '_.u',
+							label: 'uri',
+							type: 'text',
+							defaultValue: '/example',
+							required: true,
+						},
+						{
+							key: 'data',
+							label: 'data',
+							type: 'text',
+							required: false,
+						},
+					],
+				},
+				table: [
 					{
 						key: 'field_a',
 						label: 'Field a',
@@ -115,12 +141,12 @@ class DashboardConfig {
 			},
 			{
 				menu: ['example', 'view request list'],
-				component: 'view request list',
+				component: 'view_request_list',
 				list: [
 					{
-						name: 'request list',
+						name: 'request list a',
 						description: 'request list example.',
-						component: 'request',
+						component: 'request_form',
 						fields: [
 							{
 								key: 'field_a',
@@ -134,6 +160,27 @@ class DashboardConfig {
 								type: 'select',
 								typeData: ['a', 'b', 'c', 'd'],
 								defaultValue: 'a',
+								required: true,
+							},
+						],
+					},
+					{
+						name: 'request list b',
+						description: 'request list example.',
+						component: 'request_form',
+						fields: [
+							{
+								key: 'field_a',
+								label: 'Field text',
+								type: 'text',
+								required: false,
+							},
+							{
+								key: 'field_b',
+								label: 'Field select',
+								type: 'select',
+								typeData: ['1', '2', '3', '4'],
+								defaultValue: '3',
 								required: true,
 							},
 						],

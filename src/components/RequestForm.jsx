@@ -166,7 +166,7 @@ function initDefaultFieldValue(data) {
 	return values
 }
 
-export default function App({ data }) {
+export default function App({ data, onFinish }) {
 	const [formValues, setFormValues] = React.useState(
 		initDefaultFieldValue(data)
 	)
@@ -192,7 +192,9 @@ export default function App({ data }) {
 					Metp.metp_request(v.host, metp)
 						.then((res) => {
 							message.success('Request success: ')
-							console.log(res)
+							if (onFinish) {
+								onFinish(res)
+							}
 						})
 						.catch((err) => {
 							message.error('Request failed: ')
@@ -213,4 +215,5 @@ export default function App({ data }) {
 
 App.propTypes = {
 	data: PropTypes.any,
+	onFinish: PropTypes.func,
 }

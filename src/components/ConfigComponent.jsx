@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import RequestEditor from './RequestEditor'
 import DashboardConfig from './DashboardConfig'
 import RequestForm from './RequestForm'
+import RequestTable from './RequestTable'
+import ViewRequestList from './ViewRequestList'
 
 export default function App(props) {
 	if (typeof props.data !== 'object' || props.data.component === undefined) {
@@ -18,6 +20,12 @@ export default function App(props) {
 
 		case 'request_form':
 			return <RequestForm {...props} />
+
+		case 'request_table':
+			return <RequestTable {...props} />
+
+		case 'view_request_list':
+			return <ViewRequestList {...props} />
 
 		default:
 			return <div>Unknown component name: {props.data.component}</div>
