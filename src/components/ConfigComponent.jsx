@@ -5,6 +5,7 @@ import DashboardConfig from './DashboardConfig'
 import RequestForm from './RequestForm'
 import RequestTable from './RequestTable'
 import ViewRequestList from './ViewRequestList'
+import MSManagerList from './MSManagerList'
 
 export default function App(props) {
 	if (typeof props.data !== 'object' || props.data.component === undefined) {
@@ -26,6 +27,9 @@ export default function App(props) {
 
 		case 'view_request_list':
 			return <ViewRequestList {...props} />
+
+		case 'ms_manager_list':
+			return <MSManagerList {...props} />
 
 		default:
 			return <div>Unknown component name: {props.data.component}</div>

@@ -17,15 +17,20 @@ class DashboardConfig {
 	static systemConfig() {
 		return [
 			{
-				menu: ['dashboard', 'request editor'],
+				menu: ['Dashboard', 'Request Editor'],
 				component: 'request_editor',
 				host: 'http://localhost:6813',
 				fields: {
-					'_.u': '/core/version',
+					'_.u': '/core/status/version',
 				},
 			},
 			{
-				menu: ['dashboard', 'config'],
+				menu: ['Dashboard', 'Microlife Storage'],
+				component: 'ms_manager_list',
+				host: 'http://localhost:6813',
+			},
+			{
+				menu: ['Dashboard', 'Config'],
 				component: 'dashboard_config',
 			},
 		]
@@ -34,7 +39,7 @@ class DashboardConfig {
 	static defaultConfig() {
 		return [
 			{
-				menu: ['example', 'request editor'],
+				menu: ['Example', 'Request editor'],
 				component: 'request_editor',
 				host: 'http://example:6813',
 				fields: {
@@ -43,7 +48,12 @@ class DashboardConfig {
 				},
 			},
 			{
-				menu: ['example', 'request form'],
+				menu: ['Example', 'Microlife Storage'],
+				component: 'ms_manager_list',
+				host: 'http://example:6813',
+			},
+			{
+				menu: ['Example', 'Request form'],
 				path: '/example/request form',
 				component: 'request_form',
 				fields: [
@@ -100,7 +110,7 @@ class DashboardConfig {
 				],
 			},
 			{
-				menu: ['example', 'request table'],
+				menu: ['Example', 'Request table'],
 				component: 'request_table',
 				request: {
 					component: 'request_form',
@@ -140,7 +150,7 @@ class DashboardConfig {
 				],
 			},
 			{
-				menu: ['example', 'view request list'],
+				menu: ['Example', 'View request list'],
 				component: 'view_request_list',
 				list: [
 					{
@@ -205,6 +215,11 @@ class DashboardConfig {
 			}
 			this.userStr = user
 			this.user = json5.parse(user)
+			if (!Array.isArray(this.user)) {
+				console.error('user must be an array: ', this.user)
+				this.userStr = JSON.stringify(DashboardConfig.defaultConfig(), null, 2)
+				this.user = DashboardConfig.defaultConfig()
+			}
 		}
 		if (storage !== undefined && storage !== null) {
 			if (typeof storage !== 'object') {

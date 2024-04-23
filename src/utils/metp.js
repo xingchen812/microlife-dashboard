@@ -207,7 +207,7 @@ function to_json_stringify(value) {
 			return j.toString()
 		}
 		if (typeof j === 'string') {
-			return `"${j}"`
+			return JSON.stringify(j)
 		}
 		if (typeof j === 'boolean') {
 			return j === true ? 'true' : 'false'
