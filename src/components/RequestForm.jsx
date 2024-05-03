@@ -189,7 +189,7 @@ export default function App({ data, onFinish }) {
 							metp.set(key.slice(1), value)
 						}
 					})
-					Metp.metp_request(v.host, metp)
+					Metp.metp_request_once(v.host, metp)
 						.then((res) => {
 							message.success('Request success: ')
 							if (onFinish) {

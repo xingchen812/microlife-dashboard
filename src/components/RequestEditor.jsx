@@ -26,7 +26,7 @@ export default function App({ data }) {
 					type="primary"
 					onClick={() => {
 						setResponse('')
-						Metp.metp_request(host, Metp.to_metp(json5.parse(request)))
+						Metp.metp_request_once(host, Metp.to_metp(json5.parse(request)))
 							.then((response) => {
 								setResponse(
 									JSON.stringify(

@@ -19,7 +19,7 @@ class DashboardConfig {
 			{
 				menu: ['Dashboard', 'Request Editor'],
 				component: 'request_editor',
-				host: 'http://localhost:6813',
+				host: 'ws://localhost:6813/ws',
 				fields: {
 					'_.u': '/core/status/version',
 				},
@@ -27,7 +27,7 @@ class DashboardConfig {
 			{
 				menu: ['Dashboard', 'Microlife Storage'],
 				component: 'ms_manager_list',
-				host: 'http://localhost:6813',
+				host: 'ws://localhost:6813/ws',
 			},
 			{
 				menu: ['Dashboard', 'Config'],
@@ -41,7 +41,7 @@ class DashboardConfig {
 			{
 				menu: ['Example', 'Request editor'],
 				component: 'request_editor',
-				host: 'http://example:6813',
+				host: 'ws://example:6813/ws',
 				fields: {
 					'_.u': '/example',
 					something: 'something value',
@@ -50,7 +50,7 @@ class DashboardConfig {
 			{
 				menu: ['Example', 'Microlife Storage'],
 				component: 'ms_manager_list',
-				host: 'http://example:6813',
+				host: 'ws://example:6813/ws',
 			},
 			{
 				menu: ['Example', 'Request form'],
@@ -98,7 +98,7 @@ class DashboardConfig {
 						key: 'field_g',
 						label: 'Field host',
 						type: 'host',
-						defaultValue: 'http://localhost:6813',
+						defaultValue: 'ws://localhost:6813/ws',
 					},
 					{
 						key: 'field_unshown',
@@ -119,7 +119,7 @@ class DashboardConfig {
 							key: 'host',
 							label: 'host',
 							type: 'host',
-							defaultValue: 'http://localhost:6813',
+							defaultValue: 'ws://localhost:6813/ws',
 							required: true,
 							shown: false,
 						},
@@ -249,7 +249,7 @@ class DashboardConfig {
 				break
 
 			case 'microlife':
-				await Metp.metp_request(
+				await Metp.metp_request_once(
 					this.storage.data,
 					new Map([
 						['_.u', '/config/dashboard/microlife_dashboard_config_user'],
@@ -282,7 +282,7 @@ class DashboardConfig {
 				break
 
 			case 'microlife': {
-				const res = await Metp.metp_request(
+				const res = await Metp.metp_request_once(
 					this.storage.data,
 					new Map([
 						['_.u', '/config/dashboard/microlife_dashboard_config_user'],

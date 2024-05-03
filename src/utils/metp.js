@@ -107,42 +107,194 @@ function deserialize(str, type) {
 	throw new Error('Invalid type')
 }
 
-function metp_request(host, metp) {
+async function async_deserialize(reader, type) {
+	if (typeof type === 'number') {
+		let valueStr = ''
+		let char
+		// eslint-disable-next-line no-constant-condition
+		while (true) {
+			char = await reader(1)
+			if (char === ' ') break
+			valueStr += char
+		}
+		const value = parseInt(valueStr, 16)
+		if (isNaN(value)) {
+			throw new Error('Invalid number')
+		}
+		return value
+	}
+	if (typeof type === 'string') {
+		const len = await async_deserialize(reader, 0)
+		return await reader(len)
+	}
+	if (Array.isArray(type)) {
+		const len = await async_deserialize(reader, 0)
+		const result = []
+		for (let i = 0; i < len; i++) {
+			result.push(await async_deserialize(reader, type[0]))
+		}
+		return result
+	}
+	if (type instanceof Set) {
+		return new Set(await async_deserialize(reader, [type[0]]))
+	}
+	if (type instanceof Map) {
+		const len = await async_deserialize(reader, 0)
+		const result = new Map()
+		const firstKey = type.keys().next().value
+		const firstValue = type.get(firstKey)
+		for (let i = 0; i < len; i++) {
+			const key = await async_deserialize(reader, firstKey)
+			const value = await async_deserialize(reader, firstValue)
+			result.set(key, value)
+		}
+		return result
+	}
+	if (typeof type === 'object') {
+		if (
+			typeof type.async_deserialize === 'function' &&
+			type.async_deserialize.length === 1
+		) {
+			return type.async_deserialize(reader)
+		}
+		throw new Error('Invalid object')
+	}
+	throw new Error('Invalid type')
+}
+
+class WebSocketStream {
+	constructor(url) {
+		this.socket = new WebSocket(url)
+		this.socket.binaryType = 'arraybuffer'
+		this.readQueue = []
+		this.bufferedData = []
+		this.totalBuffered = 0
+		this.isOpen = false
+
+		this.socket.onopen = () => (this.isOpen = true)
+		this.socket.onmessage = (event) => this.handleMessage(event)
+		this.socket.onerror = (event) => this.handleError(event)
+		this.socket.onclose = () => this.handleClose()
+		this.decoder = new TextDecoder('ascii')
+	}
+
+	handleError(event) {
+		this.isOpen = false
+		const errorMessage =
+			event instanceof ErrorEvent ? event.message : 'WebSocket connection error'
+		for (const pending of this.readQueue) {
+			pending.reject(new Error(errorMessage))
+		}
+		this.readQueue = []
+	}
+
+	handleMessage(event) {
+		this.bufferedData.push(event.data)
+		this.totalBuffered += event.data.byteLength
+		this.resolveReads()
+	}
+
+	resolveReads() {
+		while (
+			this.readQueue.length > 0 &&
+			this.totalBuffered >= this.readQueue[0].size
+		) {
+			const readRequest = this.readQueue.shift()
+			const size = readRequest.size
+			const dataToReturn = this.collectData(size)
+
+			readRequest.resolve(dataToReturn)
+		}
+	}
+
+	collectData(size) {
+		let collected = new Uint8Array(size)
+		let collectedLength = 0
+
+		while (collectedLength < size) {
+			const firstBuffer = this.bufferedData[0]
+			const remaining = size - collectedLength
+			const toCopy = Math.min(remaining, firstBuffer.byteLength)
+
+			collected.set(
+				new Uint8Array(firstBuffer.slice(0, toCopy)),
+				collectedLength
+			)
+			collectedLength += toCopy
+
+			if (toCopy < firstBuffer.byteLength) {
+				this.bufferedData[0] = firstBuffer.slice(toCopy)
+			} else {
+				this.bufferedData.shift()
+			}
+		}
+
+		this.totalBuffered -= size
+		return this.decoder.decode(collected)
+	}
+
+	async read(size) {
+		if (this.totalBuffered >= size) {
+			return this.collectData(size)
+		} else {
+			return new Promise((resolve, reject) => {
+				this.readQueue.push({ size, resolve, reject })
+			})
+		}
+	}
+
+	write(data) {
+		if (this.socket.readyState === WebSocket.OPEN) {
+			const buffer = new TextEncoder().encode(data)
+			this.socket.send(buffer)
+		} else {
+			throw new Error('WebSocket is not open.')
+		}
+	}
+
+	handleClose() {
+		this.isOpen = false
+		for (const pending of this.readQueue) {
+			pending.reject(new Error('WebSocket connection closed'))
+		}
+		this.readQueue = []
+		this.bufferedData = []
+	}
+}
+
+async function* metp_request(host) {
 	class Constant {
 		static metp_head = '\x02\x36\x34\x20'
 		static map = new Map([['', '']])
 	}
 
-	if (!(metp instanceof Map)) {
-		throw new Error('Invalid metp')
-	}
-
-	const xhr = new XMLHttpRequest()
-	const promise = new Promise((resolve, reject) => {
-		xhr.open('POST', host)
-		xhr.setRequestHeader('Microlife', 'dgtp')
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState === XMLHttpRequest.DONE) {
-				if (xhr.status === 200) {
-					const [res, str] = deserialize(xhr.responseText, Constant.map)
-					if (str.length > 0) {
-						reject(new Error('Invalid response'))
-					}
-					resolve(res)
-				} else {
-					reject(new Error('HTTP error: ' + xhr.status))
-				}
-			}
-		}
-		xhr.onerror = function () {
-			reject(new Error('Network error'))
-		}
-		xhr.send(Constant.metp_head + serialize(metp))
+	const ws = new WebSocketStream(host)
+	await new Promise((resolve, reject) => {
+		ws.socket.onopen = resolve
+		ws.socket.onerror = reject
+	}).catch((err) => {
+		throw new Error('Unable to connect to server: ' + err.message)
 	})
-	promise.abort = function () {
-		xhr.abort()
+	let req = yield null
+	while (true) {
+		if (!(req instanceof Map)) {
+			throw new Error('Invalid metp')
+		}
+		ws.write(Constant.metp_head)
+		ws.write(serialize(req))
+		req = yield await async_deserialize(ws.read.bind(ws), Constant.map)
 	}
-	return promise
+}
+
+async function metp_request_once(host, metp) {
+	try {
+		const generator = metp_request(host)
+		await generator.next()
+		return generator.next(metp)
+	} catch (error) {
+		console.error('Error in metp_request_once: ' + error.message)
+		throw error
+	}
 }
 
 function add_to_map(metp, key, value) {
@@ -255,6 +407,7 @@ export default {
 	serialize,
 	deserialize,
 	metp_request,
+	metp_request_once,
 	to_metp,
 	to_json_stringify,
 }
